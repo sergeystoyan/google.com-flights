@@ -1,0 +1,3 @@
+Url	Mobiles	SmsGateway	AlertFactor
+https://www.google.com/flights/#search;iti=DEN_SYD_2017-02-08*AKL_DEN_2017-02-24;tt=m;a=UA;so=p	3038278500	txt.att.net	0.88
+https://www.google.com/flights/#search;f=DEN;t=LHR;d=2016-07-11;r=2016-07-25;a=UA;so=p	3038278500	txt.att.net	0.88
