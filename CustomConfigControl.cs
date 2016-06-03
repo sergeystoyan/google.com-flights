@@ -54,6 +54,16 @@ namespace Cliver.BotGui
             if (!string.IsNullOrWhiteSpace(d.FileName))
                 UsersFile.Text = d.FileName;
         }
+
+        private void UsersFile_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label17_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
 

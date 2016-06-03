@@ -160,6 +160,7 @@ namespace Cliver.BotGui
             this.UsersFile.Name = "UsersFile";
             this.UsersFile.Size = new System.Drawing.Size(460, 47);
             this.UsersFile.TabIndex = 61;
+            this.UsersFile.TextChanged += new System.EventHandler(this.UsersFile_TextChanged);
             // 
             // label17
             // 
@@ -169,6 +170,7 @@ namespace Cliver.BotGui
             this.label17.Size = new System.Drawing.Size(56, 13);
             this.label17.TabIndex = 60;
             this.label17.Text = "Users File:";
+            this.label17.Click += new System.EventHandler(this.label17_Click);
             // 
             // CustomConfigControl
             // 

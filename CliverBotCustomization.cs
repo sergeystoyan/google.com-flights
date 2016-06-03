@@ -77,9 +77,9 @@ Developed by: www.cliversoft.com";
 
         new static public void SessionCreating()
         {
-            InternetDateTime.CHECK_TEST_PERIOD_VALIDITY(2016, 6, 7);
+            InternetDateTime.CHECK_TEST_PERIOD_VALIDITY(2016, 6, 10);
 
-            vs = new List<string>();
+            vs.Clear();
 
             if (File.Exists(FileWriter.This.FilePath))
             {
@@ -108,7 +108,7 @@ Developed by: www.cliversoft.com";
             FileWriter.This.PrepareAndWriteHtmlLine(vs.ToArray());
         }
 
-        static List<string> vs;
+        static List<string> vs = new List<string>();
         static DataSifter.Parser flights = new DataSifter.Parser("Flights.fltr");
         static DataSifter.Parser url = new DataSifter.Parser("Url.fltr");
 
