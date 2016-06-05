@@ -77,7 +77,7 @@ Developed by: www.cliversoft.com";
 
         new static public void SessionCreating()
         {
-            InternetDateTime.CHECK_TEST_PERIOD_VALIDITY(2016, 6, 10);
+            //InternetDateTime.CHECK_TEST_PERIOD_VALIDITY(2016, 6, 11);
 
             vs.Clear();
 
@@ -147,8 +147,11 @@ Developed by: www.cliversoft.com";
 
             override public void PROCESSOR(BotCycle bc)
             {
+                //Thread.Sleep(1000);
+                //Log.Write("1");
+                //return;
                 CustomBot cb = (CustomBot)bc.Bot;
-
+                
                 string route;
                 string price;
 
