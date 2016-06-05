@@ -25,9 +25,9 @@ namespace Cliver.BotCustomization
         {
             if (!UsersFile.Contains(":"))
             {
-                if (!Directory.Exists(Cliver.Bot.Log.AppCommonDataDir))
-                    Directory.CreateDirectory(Cliver.Bot.Log.AppCommonDataDir);
-                string file2 = Cliver.Bot.Log.AppCommonDataDir + "\\" + Custom.Default.UsersFile;
+                if (!Directory.Exists(Cliver.Log.AppCommonDataDir))
+                    Directory.CreateDirectory(Cliver.Log.AppCommonDataDir);
+                string file2 = Cliver.Log.AppCommonDataDir + "\\" + Custom.Default.UsersFile;
                 if (!File.Exists(file2))
                     File.Copy(UsersFile, file2);
                 UsersFile = file2;

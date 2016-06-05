@@ -42,14 +42,14 @@ namespace Cliver.BotGui
             }
             catch (Exception ex)
             {
-                Bot.LogMessage.Error(ex);
+                LogMessage.Error(ex);
             }
         }
 
         private void ChooseInputFile_Click(object sender, EventArgs e)
         {
             OpenFileDialog d = new OpenFileDialog();
-            d.InitialDirectory = Bot.PathRoutines.GetDirFromPath(UsersFile.Text);
+            d.InitialDirectory = PathRoutines.GetDirFromPath(UsersFile.Text);
             d.ShowDialog();
             if (!string.IsNullOrWhiteSpace(d.FileName))
                 UsersFile.Text = d.FileName;
