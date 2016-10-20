@@ -1,6 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<!--Filter tree file. Produced by DataSifter3.0, http://www.cliversoft.com-->
-<FilterTree>
-  <Filter type="RegexFilter" version="1.0" input_group="" definition="iti=(?'Route'.{7})&#xA;IgnoreCase, Compiled, Singleline" comment="" />
-  <Filter type="RegexFilter" version="1.0" input_group="" definition="f=(?'Route1'.*?);t=(?'Route2'.*?);&#xA;IgnoreCase, Compiled, Singleline" comment="" />
-</FilterTree>
