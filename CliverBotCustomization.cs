@@ -138,11 +138,22 @@ Developed by: www.cliversoft.com";
             }
         }
 
-        override public void CycleBeginning()
+        override public void CycleStarting()
         {
-            IR = new IeRoutine(((IeRoutineBotThreadControl)BotThreadControl.GetInstanceForThisThread()).Browser);
+            irbtc = (IeRoutineBotThreadControl)BotThreadControl.GetInstanceForThisThread();
+            IR = new IeRoutine(irbtc.Browser);
             IR.UseCache = false;
         }
+
+        override public void CycleExiting(bool completed)
+        {
+            irbtc.Invoke(() => {
+                irbtc.Browser.Stop();
+                irbtc.Controls.Remove(irbtc.Browser);
+                irbtc.Browser.Dispose();
+            });
+        }
+        IeRoutineBotThreadControl irbtc;
 
         IeRoutine IR;
 

@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <!--Filter tree file. Produced by DataSifter3.0, http://www.cliversoft.com-->
 <FilterTree>
-  <Filter type="RegexFilter" version="1.0" input_group="" definition="(?'Flight'&lt;a [^&gt;]*?href=&quot;https://www.google.com/flights/\?f=0\#search.*?&lt;/a&gt;)&#xA;IgnoreCase, Compiled, Singleline" comment="">
+  <Filter type="RegexFilter" version="1.0" input_group="" definition="(?'Flight'&lt;a [^&gt;]*?href=&quot;https://www.google.com/flights/(?:\?f=0)?\#search.*?&lt;/a&gt;)&#xA;IgnoreCase, Compiled, Singleline" comment="">
     <Filter type="RegexFilter" version="1.0" input_group="Flight" definition="href=&quot;(?'Url'.*?)&quot;&#xA;IgnoreCase, Compiled, Singleline" comment="" />
     <Filter type="RegexFilter" version="1.0" input_group="Flight" definition="href=&quot;.*sel=(?'Route'.*?);&#xA;IgnoreCase, Compiled, Singleline" comment="" />
     <Filter type="RegexFilter" version="1.0" input_group="Flight" definition="div elm=&quot;p&quot;&gt;(?'Price'.*?)&lt;/div&#xA;IgnoreCase, Compiled, Singleline" comment="" />
