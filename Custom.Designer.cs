@@ -12,7 +12,7 @@ namespace Cliver.BotCustomization {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "12.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "14.0.0.0")]
     public sealed partial class Custom : global::System.Configuration.ApplicationSettingsBase {
         
         private static Custom defaultInstance = ((Custom)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Custom())));
@@ -26,12 +26,12 @@ namespace Cliver.BotCustomization {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("L-J-smith@prodigy.net")]
-        public string Email {
+        public string SenderEmail {
             get {
-                return ((string)(this["Email"]));
+                return ((string)(this["SenderEmail"]));
             }
             set {
-                this["Email"] = value;
+                this["SenderEmail"] = value;
             }
         }
         
@@ -80,6 +80,42 @@ namespace Cliver.BotCustomization {
             }
             set {
                 this["UsersFile"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("txt.att.net")]
+        public string AdminSmsGateway {
+            get {
+                return ((string)(this["AdminSmsGateway"]));
+            }
+            set {
+                this["AdminSmsGateway"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("L-J-smith@prodigy.net")]
+        public string AdminEmail {
+            get {
+                return ((string)(this["AdminEmail"]));
+            }
+            set {
+                this["AdminEmail"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("3038278500")]
+        public string AdminMobile {
+            get {
+                return ((string)(this["AdminMobile"]));
+            }
+            set {
+                this["AdminMobile"] = value;
             }
         }
     }

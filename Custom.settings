@@ -2,7 +2,7 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Cliver.BotCustomization" GeneratedClassName="Custom">
   <Profiles />
   <Settings>
-    <Setting Name="Email" Type="System.String" Scope="User">
+    <Setting Name="SenderEmail" Type="System.String" Scope="User">
       <Value Profile="(Default)">L-J-smith@prodigy.net</Value>
     </Setting>
     <Setting Name="SmtpPassword" Type="System.String" Scope="User">
@@ -16,6 +16,15 @@
     </Setting>
     <Setting Name="UsersFile" Type="System.String" Scope="User">
       <Value Profile="(Default)">users.txt</Value>
+    </Setting>
+    <Setting Name="AdminSmsGateway" Type="System.String" Scope="User">
+      <Value Profile="(Default)">txt.att.net</Value>
+    </Setting>
+    <Setting Name="AdminEmail" Type="System.String" Scope="User">
+      <Value Profile="(Default)">L-J-smith@prodigy.net</Value>
+    </Setting>
+    <Setting Name="AdminMobile" Type="System.String" Scope="User">
+      <Value Profile="(Default)">3038278500</Value>
     </Setting>
   </Settings>
 </SettingsFile>

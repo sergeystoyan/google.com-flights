@@ -79,15 +79,50 @@ Developed by: www.cliversoft.com";
         {
             //InternetDateTime.CHECK_TEST_PERIOD_VALIDITY(2016, 6, 11);
 
+            Session.FatalError += Session_FatalError; 
+
             vs.Clear();
 
             if (File.Exists(last_prices_file))
-                urls2old_price = Cliver.SerializationRoutines.Json.Get<Dictionary<string, double>>(File.ReadAllText(last_prices_file));
+                urls2old_price = Cliver.SerializationRoutines.Json.Deserialize<Dictionary<string, double>>(File.ReadAllText(last_prices_file));
 
             FileReader fr = new FileReader(Custom.Default.UsersFile, Cliver.Bot.Properties.Input.Default.InputFieldSeparator);
             for (FileReader.Row r = fr.ReadLine(); r != null; r = fr.ReadLine())
                 users2ui[r["User"]] = new UserInfo() { Mobile = r["Mobile"], SmsGateway = r["SmsGateway"] };
         }
+
+        private static void Session_FatalError()
+        {
+            try
+            {
+                using (
+                    SmtpClient sc = new SmtpClient
+                    {
+                        Host = Custom.Default.SmtpHost,
+                        Port = Custom.Default.SmtpPort,
+                        EnableSsl = true,
+                        DeliveryMethod = SmtpDeliveryMethod.Network,
+                        UseDefaultCredentials = false,
+                        Credentials = new NetworkCredential(Custom.Default.SenderEmail, Custom.Default.SmtpPassword)
+                    }
+                )
+                {
+                    MailMessage mm = new MailMessage(Custom.Default.SenderEmail, Custom.Default.AdminMobile + "@" + Custom.Default.AdminSmsGateway)
+                    {
+                        Subject = "CliverBot: FATAL ERROR",
+                        Body = "CliverBot stopped due to a fatal error. Details can be found in the logs. Support contact: sergey.stoyan@gmail.com"
+                    };
+                    mm.CC.Add(Custom.Default.AdminEmail);
+                    Log.Write("Emailing to " + mm.To + ": " + mm.Subject);
+                    sc.Send(mm);
+                }
+            }
+            catch (Exception e)
+            {
+                Log.Error(e);
+            }
+        }
+
         static readonly string last_prices_file = Log.WorkDir + "\\" + "last_prices.txt";
         static Dictionary<string, double> urls2old_price = null;
         static Dictionary<string, double> urls2price = new Dictionary<string,double>();
@@ -100,7 +135,7 @@ Developed by: www.cliversoft.com";
 
         new static public void SessionClosing()
         {
-            File.WriteAllText(last_prices_file, Cliver.SerializationRoutines.Json.Get(urls2price));
+            File.WriteAllText(last_prices_file, Cliver.SerializationRoutines.Json.Serialize(urls2price));
             vs.Insert(0, DateTime.Now.ToShortTimeString());
             vs.Insert(0, DateTime.Now.ToShortDateString());
             FileWriter.This.PrepareAndWriteHtmlLine(vs.ToArray());
@@ -121,6 +156,8 @@ Developed by: www.cliversoft.com";
                     string f = hd != null ? hd.GetElementsByTagName("HTML")[0].OuterHtml : "";
                     DataSifter.Capture c = flights.Parse(f);
                     DataSifter.Capture fc = c.FirstOf("Flight");
+                    if(fc == null)
+                        throw new ProcessorException(ProcessorExceptionType.ERROR, "Could not get flights.Parse");
                     //string route = PrepareField.Html.GetCsvField(fc.FirstValueOf("Route"));
                     price = Regex.Replace(FileWriter.Html.PrepareField(fc.FirstValueOf("Price")), @"\s", "");
                     DataSifter.Capture cu = CustomBot.url.Parse(url);
@@ -165,9 +202,7 @@ Developed by: www.cliversoft.com";
 
             override public void PROCESSOR(BotCycle bc)
             {
-                //Thread.Sleep(1000);
-                //Log.Write("1");
-                //return;
+                //throw new ProcessorException(ProcessorExceptionType.ERROR, "test");
                 CustomBot cb = (CustomBot)bc.Bot;
 
                 string route;
@@ -198,7 +233,7 @@ Developed by: www.cliversoft.com";
 
                 List<MailMessage> mms = new List<MailMessage>();
                 mms.Add(
-                    new MailMessage(Custom.Default.Email, Custom.Default.Email)
+                    new MailMessage(Custom.Default.SenderEmail, Custom.Default.SenderEmail)
                     {
                         Subject = "Flight Alert: " + route + " " + price,
                         Body = route + " " + price
@@ -211,7 +246,7 @@ Developed by: www.cliversoft.com";
                     if (!users2ui.TryGetValue(u, out ui))
                         throw new Bot.ProcessorException(ProcessorExceptionType.ERROR, "User " + u + " is not defined");
                     mms.Add(
-                        new MailMessage(Custom.Default.Email, ui.Mobile + "@" + ui.SmsGateway)
+                        new MailMessage(Custom.Default.SenderEmail, ui.Mobile + "@" + ui.SmsGateway)
                         {
                             Subject = route + " " + price,
                             Body = route + " " + price
@@ -237,14 +272,13 @@ Developed by: www.cliversoft.com";
                             EnableSsl = true,
                             DeliveryMethod = SmtpDeliveryMethod.Network,
                             UseDefaultCredentials = false,
-                            Credentials = new NetworkCredential(Custom.Default.Email, Custom.Default.SmtpPassword)
+                            Credentials = new NetworkCredential(Custom.Default.SenderEmail, Custom.Default.SmtpPassword)
                         }
                     )
                     {
                         foreach (MailMessage mm in mms)
                         {
                             Log.Write("Emailing to " + mm.To + ": " + mm.Subject);
-                            mm.From = new MailAddress(Custom.Default.Email);
                             sc.Send(mm);
                         }
                     }
