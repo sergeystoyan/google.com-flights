@@ -78,9 +78,7 @@ Developed by: www.cliversoft.com";
         new static public void SessionCreating()
         {
             //InternetDateTime.CHECK_TEST_PERIOD_VALIDITY(2016, 6, 11);
-
-            Session.FatalError += Session_FatalError; 
-
+            
             vs.Clear();
 
             if (File.Exists(last_prices_file))
@@ -91,7 +89,7 @@ Developed by: www.cliversoft.com";
                 users2ui[r["User"]] = new UserInfo() { Mobile = r["Mobile"], SmsGateway = r["SmsGateway"] };
         }
 
-        private static void Session_FatalError()
+        new static public void FatalError()
         {
             try
             {
@@ -113,6 +111,7 @@ Developed by: www.cliversoft.com";
                         Body = "CliverBot stopped due to a fatal error. Details can be found in the logs. Support contact: sergey.stoyan@gmail.com"
                     };
                     mm.CC.Add(Custom.Default.AdminEmail);
+                    mm.From = new MailAddress(Custom.Default.SenderEmail);//bug?
                     Log.Write("Emailing to " + mm.To + ": " + mm.Subject);
                     sc.Send(mm);
                 }
@@ -135,6 +134,7 @@ Developed by: www.cliversoft.com";
 
         new static public void SessionClosing()
         {
+            //Session.This.IsUnprocessedInputItem
             File.WriteAllText(last_prices_file, Cliver.SerializationRoutines.Json.Serialize(urls2price));
             vs.Insert(0, DateTime.Now.ToShortTimeString());
             vs.Insert(0, DateTime.Now.ToShortDateString());
@@ -278,6 +278,7 @@ Developed by: www.cliversoft.com";
                     {
                         foreach (MailMessage mm in mms)
                         {
+                            mm.From = new MailAddress(Custom.Default.SenderEmail);//bug?
                             Log.Write("Emailing to " + mm.To + ": " + mm.Subject);
                             sc.Send(mm);
                         }
