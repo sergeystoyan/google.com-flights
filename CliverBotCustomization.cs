@@ -105,12 +105,20 @@ Developed by: www.cliversoft.com";
                     }
                 )
                 {
-                    MailMessage mm = new MailMessage(Custom.Default.SenderEmail, Custom.Default.AdminMobile + "@" + Custom.Default.AdminSmsGateway)
+                    MailMessage mm = new MailMessage(Custom.Default.SenderEmail, Custom.Default.AdminEmail)
                     {
                         Subject = "CliverBot: FATAL ERROR",
                         Body = "CliverBot stopped due to a fatal error. Details can be found in the logs. Support contact: sergey.stoyan@gmail.com"
                     };
-                    mm.CC.Add(Custom.Default.AdminEmail);
+                    mm.From = new MailAddress(Custom.Default.SenderEmail);//bug?
+                    Log.Write("Emailing to " + mm.To + ": " + mm.Subject);
+                    sc.Send(mm);
+
+                    mm = new MailMessage(Custom.Default.SenderEmail, Custom.Default.AdminMobile + "@" + Custom.Default.AdminSmsGateway)
+                    {
+                        Subject = "CliverBot: FATAL ERROR",
+                        Body = "CliverBot stopped due to a fatal error. Details can be found in the logs. Support contact: sergey.stoyan@gmail.com"
+                    };
                     mm.From = new MailAddress(Custom.Default.SenderEmail);//bug?
                     Log.Write("Emailing to " + mm.To + ": " + mm.Subject);
                     sc.Send(mm);
@@ -202,6 +210,7 @@ Developed by: www.cliversoft.com";
 
             override public void PROCESSOR(BotCycle bc)
             {
+                //return;
                 //throw new ProcessorException(ProcessorExceptionType.ERROR, "test");
                 CustomBot cb = (CustomBot)bc.Bot;
 
