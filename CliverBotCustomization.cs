@@ -78,7 +78,7 @@ Developed by: www.cliversoft.com";
         new static public void SessionCreating()
         {
             //InternetDateTime.CHECK_TEST_PERIOD_VALIDITY(2016, 6, 11);
-            
+
             vs.Clear();
 
             if (File.Exists(last_prices_file))
@@ -91,48 +91,18 @@ Developed by: www.cliversoft.com";
 
         new static public void FatalError()
         {
-            try
+            MailMessage mm = new MailMessage(Custom.Default.SenderEmail, Custom.Default.AdminEmail)
             {
-                using (
-                    SmtpClient sc = new SmtpClient
-                    {
-                        Host = Custom.Default.SmtpHost,
-                        Port = Custom.Default.SmtpPort,
-                        EnableSsl = true,
-                        DeliveryMethod = SmtpDeliveryMethod.Network,
-                        UseDefaultCredentials = false,
-                        Credentials = new NetworkCredential(Custom.Default.SenderEmail, Custom.Default.SmtpPassword)
-                    }
-                )
-                {
-                    MailMessage mm = new MailMessage(Custom.Default.SenderEmail, Custom.Default.AdminEmail)
-                    {
-                        Subject = "CliverBot: FATAL ERROR",
-                        Body = "CliverBot stopped due to a fatal error. Details can be found in the logs. Support contact: sergey.stoyan@gmail.com"
-                    };
-                    mm.From = new MailAddress(Custom.Default.SenderEmail);//bug?
-                    Log.Write("Emailing to " + mm.To + ": " + mm.Subject);
-                    sc.Send(mm);
-
-                    mm = new MailMessage(Custom.Default.SenderEmail, Custom.Default.AdminMobile + "@" + Custom.Default.AdminSmsGateway)
-                    {
-                        Subject = "CliverBot: FATAL ERROR",
-                        Body = "CliverBot stopped due to a fatal error. Details can be found in the logs. Support contact: sergey.stoyan@gmail.com"
-                    };
-                    mm.From = new MailAddress(Custom.Default.SenderEmail);//bug?
-                    Log.Write("Emailing to " + mm.To + ": " + mm.Subject);
-                    sc.Send(mm);
-                }
-            }
-            catch (Exception e)
-            {
-                Log.Error(e);
-            }
+                Subject = "CliverBot: FATAL ERROR",
+                Body = "CliverBot stopped due to a fatal error. Details can be found in the logs. Support contact: sergey.stoyan@gmail.com"
+            };
+            mm.To.Add(Custom.Default.AdminMobile + "@" + Custom.Default.AdminSmsGateway);
+            email(mm);
         }
 
         static readonly string last_prices_file = Log.WorkDir + "\\" + "last_prices.txt";
         static Dictionary<string, double> urls2old_price = null;
-        static Dictionary<string, double> urls2price = new Dictionary<string,double>();
+        static Dictionary<string, double> urls2price = new Dictionary<string, double>();
         static Dictionary<string, UserInfo> users2ui = new Dictionary<string, UserInfo>();
         public class UserInfo
         {
@@ -164,7 +134,7 @@ Developed by: www.cliversoft.com";
                     string f = hd != null ? hd.GetElementsByTagName("HTML")[0].OuterHtml : "";
                     DataSifter.Capture c = flights.Parse(f);
                     DataSifter.Capture fc = c.FirstOf("Flight");
-                    if(fc == null)
+                    if (fc == null)
                         throw new ProcessorException(ProcessorExceptionType.ERROR, "Could not get flights.Parse");
                     //string route = PrepareField.Html.GetCsvField(fc.FirstValueOf("Route"));
                     price = Regex.Replace(FileWriter.Html.PrepareField(fc.FirstValueOf("Price")), @"\s", "");
@@ -174,7 +144,7 @@ Developed by: www.cliversoft.com";
                         route = cu.FirstValueOf("Route1") + "-" + cu.FirstValueOf("Route2");
                     route = cu.FirstValueOf("A") + "-" + route;
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     Log.Error(e);
                 }
@@ -192,7 +162,8 @@ Developed by: www.cliversoft.com";
 
         override public void CycleExiting(bool completed)
         {
-            irbtc.Invoke(() => {
+            irbtc.Invoke(() =>
+            {
                 irbtc.Browser.Stop();
                 irbtc.Controls.Remove(irbtc.Browser);
                 irbtc.Browser.Dispose();
@@ -268,106 +239,45 @@ Developed by: www.cliversoft.com";
 
             void email(List<MailMessage> mms)
             {
-               // return;
+                // return;
                 if (mms.Count < 1)
                     return;
+                foreach (MailMessage mm in mms)
+                    CustomBot.email(mm);
+            }
+        }
+
+        static void email(MailMessage mm)
+        {
+            using (
+                SmtpClient sc = new SmtpClient
+                {
+                    Host = Custom.Default.SmtpHost,
+                    Port = Custom.Default.SmtpPort,
+                    EnableSsl = true,
+                    DeliveryMethod = SmtpDeliveryMethod.Network,
+                    UseDefaultCredentials = false,
+                    Credentials = new NetworkCredential(Custom.Default.SenderEmail, Custom.Default.SmtpPassword)
+                }
+            )
                 try
                 {
-                    using (
-                        SmtpClient sc = new SmtpClient
-                        {
-                            Host = Custom.Default.SmtpHost,
-                            Port = Custom.Default.SmtpPort,
-                            EnableSsl = true,
-                            DeliveryMethod = SmtpDeliveryMethod.Network,
-                            UseDefaultCredentials = false,
-                            Credentials = new NetworkCredential(Custom.Default.SenderEmail, Custom.Default.SmtpPassword)
-                        }
-                    )
-                    {
-                        foreach (MailMessage mm in mms)
-                        {
-                            mm.From = new MailAddress(Custom.Default.SenderEmail);//bug?
-                            Log.Write("Emailing to " + mm.To + ": " + mm.Subject);
-                            sc.Send(mm);
-                        }
-                    }
+                    mm.From = new MailAddress(Custom.Default.SenderEmail);
+                    Log.Write("Emailing to " + mm.To + ": " + mm.Subject);
+                    sc.Send(mm);
                 }
                 catch (Exception e)
                 {
                     Log.Error(e);
+                    Log.Write("Host: " + sc.Host
+                        + "\r\nPort: " + sc.Port
+                        + "\r\nEnableSsl: " + sc.EnableSsl
+                        + "\r\nDeliveryMethod: " + sc.DeliveryMethod
+                        + "\r\nUserName: " + Custom.Default.SenderEmail
+                        + "\r\nSmtpPassword: " + Custom.Default.SmtpPassword
+                        + "\r\nFrom: " + mm.From.Address
+                        + "\r\nTo: " + mm.To);
                 }
-            }
         }
     }
 }
-
-
-/*
-Url	Users	AlertFactor
-https://www.google.com/flights/#search;f=DEN;t=LHR;d=2016-08-11;r=2016-08-25;a=UA;so=p	Larry	0.75
-https://www.google.com/flights/#search;f=DEN;t=CDG;d=2016-08-11;r=2016-08-25;a=UA;so=p	Larry	0.75
-https://www.google.com/flights/#search;f=DEN;t=MUC;d=2016-08-11;r=2016-08-25;a=UA;so=p	Larry	0.75
-https://www.google.com/flights/#search;f=DEN;t=FCO;d=2016-08-11;r=2016-08-25;a=UA;so=p	Larry	0.75
-https://www.google.com/flights/#search;f=DEN;t=DUB;d=2016-08-11;r=2016-08-25;a=UA;so=p	Larry	0.75
-https://www.google.com/flights/#search;f=DEN;t=MAD;d=2016-08-11;r=2016-08-25;a=UA;so=p	Larry	0.75
-https://www.google.com/flights/#search;f=DEN;t=FRA;d=2016-08-11;r=2016-08-25;a=UA;so=p	Larry	0.75
-https://www.google.com/flights/#search;f=DEN;t=TYO;d=2016-08-11;r=2016-08-25;a=UA;so=p	Larry	0.75
-https://www.google.com/flights/#search;f=DEN;t=PEK;d=2016-08-11;r=2016-08-25;a=UA;so=p	Larry	0.75
-https://www.google.com/flights/#search;f=DEN;t=HNL;d=2016-08-11;r=2016-08-25;a=UA;so=p	Larry	0.75
-https://www.google.com/flights/#search;f=DEN;t=LHR;d=2016-09-11;r=2016-09-25;a=UA;so=p	Larry	0.75
-https://www.google.com/flights/#search;f=DEN;t=CDG;d=2016-09-11;r=2016-09-25;a=UA;so=p	Larry	0.75
-https://www.google.com/flights/#search;f=DEN;t=MUC;d=2016-09-11;r=2016-09-25;a=UA;so=p	Larry	0.75
-https://www.google.com/flights/#search;f=DEN;t=FCO;d=2016-09-11;r=2016-09-25;a=UA;so=p	Larry	0.75
-https://www.google.com/flights/#search;f=DEN;t=DUB;d=2016-09-11;r=2016-09-25;a=UA;so=p	Larry	0.75
-https://www.google.com/flights/#search;f=DEN;t=MAD;d=2016-09-11;r=2016-09-25;a=UA;so=p	Larry	0.75
-https://www.google.com/flights/#search;f=DEN;t=FRA;d=2016-09-11;r=2016-09-25;a=UA;so=p	Larry	0.75
-https://www.google.com/flights/#search;f=DEN;t=TYO;d=2016-09-11;r=2016-09-25;a=UA;so=p	Larry	0.75
-https://www.google.com/flights/#search;f=DEN;t=PEK;d=2016-09-11;r=2016-09-25;a=UA;so=p	Larry	0.75
-https://www.google.com/flights/#search;f=DEN;t=HNL;d=2016-09-11;r=2016-09-25;a=UA;so=p	Larry	0.75
-https://www.google.com/flights/#search;f=DEN;t=LHR;d=2016-10-11;r=2016-10-25;a=UA;so=p	Larry	0.75
-https://www.google.com/flights/#search;f=DEN;t=CDG;d=2016-10-11;r=2016-10-25;a=UA;so=p	Larry	0.75
-https://www.google.com/flights/#search;f=DEN;t=MUC;d=2016-10-11;r=2016-10-25;a=UA;so=p	Larry	0.75
-https://www.google.com/flights/#search;f=DEN;t=FCO;d=2016-10-11;r=2016-10-25;a=UA;so=p	Larry	0.75
-https://www.google.com/flights/#search;f=DEN;t=DUB;d=2016-10-11;r=2016-10-25;a=UA;so=p	Larry	0.75
-https://www.google.com/flights/#search;f=DEN;t=MAD;d=2016-10-11;r=2016-10-25;a=UA;so=p	Larry	0.75
-https://www.google.com/flights/#search;f=DEN;t=FRA;d=2016-10-11;r=2016-10-25;a=UA;so=p	Larry	0.75
-https://www.google.com/flights/#search;f=DEN;t=TYO;d=2016-10-11;r=2016-10-25;a=UA;so=p	Larry	0.75
-https://www.google.com/flights/#search;f=DEN;t=PEK;d=2016-10-11;r=2016-10-25;a=UA;so=p	Larry	0.75
-https://www.google.com/flights/#search;f=DEN;t=HNL;d=2016-10-11;r=2016-10-25;a=UA;so=p	Larry	0.75
-https://www.google.com/flights/#search;f=DEN;t=TYS;d=2016-10-06;r=2016-10-09;a=UA;so=p	Larry	0.75
-https://www.google.com/flights/#search;f=DEN;t=TRI;d=2016-10-06;r=2016-10-09;so=p	Larry	0.75
-https://www.google.com/flights/#search;f=DEN;t=LHR;d=2016-11-11;r=2016-11-25;a=UA;so=p	Larry	0.75
-https://www.google.com/flights/#search;f=DEN;t=CDG;d=2016-11-11;r=2016-11-25;a=UA;so=p	Larry	0.75
-https://www.google.com/flights/#search;f=DEN;t=MUC;d=2016-11-11;r=2016-11-25;a=UA;so=p	Larry	0.75
-https://www.google.com/flights/#search;f=DEN;t=FCO;d=2016-11-11;r=2016-11-25;a=UA;so=p	Larry	0.75
-https://www.google.com/flights/#search;f=DEN;t=DUB;d=2016-11-11;r=2016-11-25;a=UA;so=p	Larry	0.75
-https://www.google.com/flights/#search;f=DEN;t=MAD;d=2016-11-11;r=2016-11-25;a=UA;so=p	Larry	0.75
-https://www.google.com/flights/#search;f=DEN;t=FRA;d=2016-11-11;r=2016-11-25;a=UA;so=p	Larry	0.75
-https://www.google.com/flights/#search;f=DEN;t=TYO;d=2016-11-11;r=2016-11-25;a=UA;so=p	Larry	0.75
-https://www.google.com/flights/#search;f=DEN;t=PEK;d=2016-11-11;r=2016-11-25;a=UA;so=p	Larry	0.75
-https://www.google.com/flights/#search;f=DEN;t=HNL;d=2016-11-11;r=2016-11-25;a=UA;so=p	Larry	0.75
-https://www.google.com/flights/#search;f=DEN;t=LHR;d=2016-12-11;r=2016-12-28;a=UA;so=p	Larry	0.75
-https://www.google.com/flights/#search;f=DEN;t=CDG;d=2016-12-11;r=2016-12-28;a=UA;so=p	Larry	0.75
-https://www.google.com/flights/#search;f=DEN;t=MUC;d=2016-12-11;r=2016-12-28;a=UA;so=p	Larry	0.75
-https://www.google.com/flights/#search;f=DEN;t=FCO;d=2016-12-11;r=2016-12-28;a=UA;so=p	Larry	0.75
-https://www.google.com/flights/#search;f=DEN;t=DUB;d=2016-12-11;r=2016-12-28;a=UA;so=p	Larry	0.75
-https://www.google.com/flights/#search;f=DEN;t=MAD;d=2016-12-11;r=2016-12-28;a=UA;so=p	Larry	0.75
-https://www.google.com/flights/#search;f=DEN;t=FRA;d=2016-12-11;r=2016-12-28;a=UA;so=p	Larry	0.75
-https://www.google.com/flights/#search;f=DEN;t=TYO;d=2016-12-11;r=2016-12-28;a=UA;so=p	Larry	0.75
-https://www.google.com/flights/#search;f=DEN;t=PEK;d=2016-12-11;r=2016-12-28;a=UA;so=p	Larry	0.75
-https://www.google.com/flights/#search;f=DEN;t=HNL;d=2016-12-11;r=2016-12-28;a=UA;so=p	Larry	0.75
-
-*/
-
-/*
-User	Mobile	SmsGateway
-Larry	3038278500	txt.att.net
-Judy	3037755150	txt.att.net	
-Jerry C	3035214011	vtext.com
-Amy	3039314413	vtext.com
-Bruce	3039071794	vtext.com
-Jerry S	9314091320	vtext.com
-	
-
-*/
