@@ -87,16 +87,22 @@ Developed by: www.cliversoft.com";
             FileReader fr = new FileReader(Custom.Default.UsersFile, Cliver.Bot.Properties.Input.Default.InputFieldSeparator);
             for (FileReader.Row r = fr.ReadLine(); r != null; r = fr.ReadLine())
                 users2ui[r["User"]] = new UserInfo() { Mobile = r["Mobile"], SmsGateway = r["SmsGateway"] };
+
+            throw new Session.FatalException("xgd");
         }
 
-        new static public void FatalError()
+        new static public void FatalError(string message)
         {
             MailMessage mm = new MailMessage(Custom.Default.SenderEmail, Custom.Default.AdminEmail)
             {
                 Subject = "CliverBot: FATAL ERROR",
                 Body = "CliverBot stopped due to a fatal error. Details can be found in the logs. Support contact: sergey.stoyan@gmail.com"
             };
+            mm.To.Clear();
             mm.To.Add(Custom.Default.AdminMobile + "@" + Custom.Default.AdminSmsGateway);
+            email(mm);
+            mm.To.Clear();
+            mm.To.Add(Custom.Default.AdminEmail);
             email(mm);
         }
 
