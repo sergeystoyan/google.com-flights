@@ -80,6 +80,8 @@ Developed by: www.cliversoft.com";
         {
             //InternetDateTime.CHECK_TEST_PERIOD_VALIDITY(2016, 6, 11);
 
+            Session.FatalError += Session_FatalError;      
+
             vs.Clear();
 
             if (File.Exists(last_prices_file))
@@ -90,7 +92,7 @@ Developed by: www.cliversoft.com";
                 users2ui[r["User"]] = new UserInfo() { Mobile = r["Mobile"], SmsGateway = r["SmsGateway"] };
         }
 
-        new static public void FatalError(string message)
+        private static void Session_FatalError(string message)
         {
             MailMessage mm = new MailMessage(Custom.Default.SenderEmail, Custom.Default.AdminEmail)
             {
@@ -186,7 +188,7 @@ Developed by: www.cliversoft.com";
 
             override public void PROCESSOR(BotCycle bc)
             {
-                //return;
+                //Session.FatalErrorClose("");
                 //throw new ProcessorException(ProcessorExceptionType.ERROR, "test");
                 //throw new Session.FatalException("test");
                 CustomBot cb = (CustomBot)bc.Bot;
