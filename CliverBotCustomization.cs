@@ -26,6 +26,7 @@ using System.Windows.Forms;
 //using MySql.Data.MySqlClient;
 using Cliver.Bot;
 using Cliver.BotGui;
+using Cliver.BotWeb;
 using Microsoft.Win32;
 using System.Reflection;
 
@@ -51,7 +52,7 @@ namespace Cliver.BotCustomization
     {
         override public string[] GetConfigControlNames()
         {
-            return new string[] { "General", "Input", "Output", "Web", /*"Browser", "Spider",*/ "Proxy", "Log", "Custom" };
+            return new string[] { "General", "Input", "Output", "Web", /*"Browser", "Spider", "Proxy",*/ "Log", "Custom" };
         }
 
         override public Cliver.BaseForm GetToolsForm()
@@ -84,7 +85,7 @@ Developed by: www.cliversoft.com";
             if (File.Exists(last_prices_file))
                 urls2old_price = Cliver.SerializationRoutines.Json.Deserialize<Dictionary<string, double>>(File.ReadAllText(last_prices_file));
 
-            FileReader fr = new FileReader(Custom.Default.UsersFile, Cliver.Bot.Properties.Input.Default.InputFieldSeparator);
+            FileReader fr = new FileReader(Custom.Default.UsersFile, Cliver.Bot.Settings.Input.FileFormat);
             for (FileReader.Row r = fr.ReadLine(); r != null; r = fr.ReadLine())
                 users2ui[r["User"]] = new UserInfo() { Mobile = r["Mobile"], SmsGateway = r["SmsGateway"] };
         }
@@ -164,7 +165,7 @@ Developed by: www.cliversoft.com";
             IR.UseCache = false;
         }
 
-        override public void CycleExiting(bool completed)
+        override public void CycleExiting()
         {
             irbtc.Invoke(() =>
             {
@@ -187,6 +188,7 @@ Developed by: www.cliversoft.com";
             {
                 //return;
                 //throw new ProcessorException(ProcessorExceptionType.ERROR, "test");
+                //throw new Session.FatalException("test");
                 CustomBot cb = (CustomBot)bc.Bot;
 
                 string route;
