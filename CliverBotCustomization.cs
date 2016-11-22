@@ -38,44 +38,30 @@ namespace Cliver.BotCustomization
         static void Main()
         {
             Config.Initialize(new string[] { "Engine", "Input", "Output", "Web", "Log", "Browser" });
+            Cliver.BotGui.Api.ConfigControlSections = new string[] { "Custom", "Engine", "Input", "Output", "Web", /*"Browser", "Spider", "Proxy",*/ "Log" };
+            Cliver.BotGui.Api.BotThreadControlType = typeof(IeRoutineBotThreadControl);
+            Cliver.Bot.Bot.About = @"WEB CRAWLER
+Created: " + Cliver.Bot.Program.GetCustomizationCompiledTime().ToString() + @"
+Developed by: www.cliversoft.com";
+            //Cliver.Bot.Bot.Type = typeof(CustomBot);
+
             //Cliver.Bot.Program.Run();//It is the entry when the app runs as a console app.
             Cliver.BotGui.Program.Run();//It is the entry when the app uses the default GUI.
         }
     }
 
-    public class CustomBotGui : Cliver.BotGui.BotGui
-    {
-        override public string[] GetConfigControlNames()
-        {
-            return new string[] { "Custom", "Engine", "Input", "Output", "Web", /*"Browser", "Spider", "Proxy",*/ "Log" };
-        }
-
-        override public Cliver.BaseForm GetToolsForm()
-        {
-            return null;
-        }
-
-        override public Type GetBotThreadControlType()
-        {
-            return typeof(IeRoutineBotThreadControl);
-            //return typeof(WebRoutineBotThreadControl);
-        }
-    }
-
     public class CustomBot : Cliver.Bot.Bot
     {
-        new static public string GetAbout()
+        static CustomBot()
         {
-            return @"WEB CRAWLER
-Created: " + Cliver.Bot.Program.GetCustomizationCompiledTime().ToString() + @"
-Developed by: www.cliversoft.com";
+            Session.FatalError += Session_FatalError;
+            Session.Starting += Session_Starting;
+            Session.Closing += Session_Closing;
         }
 
-        new static public void SessionCreating()
+        private static void Session_Starting()
         {
             //InternetDateTime.CHECK_TEST_PERIOD_VALIDITY(2016, 6, 11);
-
-            Session.FatalError += Session_FatalError;      
 
             vs.Clear();
 
@@ -85,6 +71,15 @@ Developed by: www.cliversoft.com";
             FileReader fr = new FileReader(Custom.Default.UsersFile, Cliver.Bot.Settings.Input.FileFormat);
             for (FileReader.Row r = fr.ReadLine(); r != null; r = fr.ReadLine())
                 users2ui[r["User"]] = new UserInfo() { Mobile = r["Mobile"], SmsGateway = r["SmsGateway"] };
+        }
+
+        private static void Session_Closing()
+        {
+            //Session.This.IsUnprocessedInputItem
+            File.WriteAllText(last_prices_file, Cliver.SerializationRoutines.Json.Serialize(urls2price));
+            vs.Insert(0, DateTime.Now.ToShortTimeString());
+            vs.Insert(0, DateTime.Now.ToShortDateString());
+            FileWriter.This.PrepareAndWriteHtmlLine(vs.ToArray());
         }
 
         private static void Session_FatalError(string message)
@@ -118,15 +113,6 @@ Developed by: www.cliversoft.com";
             public string Mobile;
         }
 
-        new static public void SessionClosing()
-        {
-            //Session.This.IsUnprocessedInputItem
-            File.WriteAllText(last_prices_file, Cliver.SerializationRoutines.Json.Serialize(urls2price));
-            vs.Insert(0, DateTime.Now.ToShortTimeString());
-            vs.Insert(0, DateTime.Now.ToShortDateString());
-            FileWriter.This.PrepareAndWriteHtmlLine(vs.ToArray());
-        }
-
         static List<string> vs = new List<string>();
         static DataSifter.Parser flights = new DataSifter.Parser("Flights.fltr");
         static DataSifter.Parser url = new DataSifter.Parser("Url.fltr");
@@ -144,8 +130,7 @@ Developed by: www.cliversoft.com";
                     DataSifter.Capture fc = c.FirstOf("Flight");
                     if (fc == null)
                         throw new ProcessorException(ProcessorExceptionType.ERROR, "Could not get flights.Parse");
-                    //string route = PrepareField.Html.GetCsvField(fc.FirstValueOf("Route"));
-                    price = Regex.Replace(FileWriter.Html.PrepareField(fc.FirstValueOf("Price")), @"\s", "");
+                    price = Regex.Replace(fc.FirstValueOf("Price"), @"[\s,]", "");
                     DataSifter.Capture cu = CustomBot.url.Parse(url);
                     route = cu.FirstValueOf("Route");
                     if (string.IsNullOrWhiteSpace(route))
