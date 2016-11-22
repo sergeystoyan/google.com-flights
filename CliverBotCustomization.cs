@@ -49,7 +49,7 @@ namespace Cliver.BotCustomization
 
     public class CustomBot : Cliver.Bot.Bot
     {
-        new static public string About = @"WEB CRAWLER
+        new static public readonly string About = @"WEB CRAWLER
 Created: " + Cliver.Bot.Program.GetCustomizationCompiledTime().ToString() + @"
 Developed by: www.cliversoft.com";
 
