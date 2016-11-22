@@ -37,7 +37,7 @@ namespace Cliver.BotCustomization
         [STAThread]
         static void Main()
         {
-            Config.Initialize(new string[] { "Engine", "Input", "Output", "Web", /*"Browser", "Spider", "Proxy",*/ "Log"});
+            Config.Initialize(new string[] { "Engine", "Input", "Output", "Web", "Log", "Browser" });
             //Cliver.Bot.Program.Run();//It is the entry when the app runs as a console app.
             Cliver.BotGui.Program.Run();//It is the entry when the app uses the default GUI.
         }
@@ -273,7 +273,9 @@ Developed by: www.cliversoft.com";
                 {
                     mm.From = new MailAddress(Custom.Default.SenderEmail);
                     Log.Write("Emailing to " + mm.To + ": " + mm.Subject);
+#if !DEBUG
                     sc.Send(mm);
+#endif
                 }
                 catch (Exception e)
                 {
