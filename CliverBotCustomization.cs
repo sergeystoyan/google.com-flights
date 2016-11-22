@@ -37,12 +37,7 @@ namespace Cliver.BotCustomization
         [STAThread]
         static void Main()
         {
-            //Cliver.CrawlerHost.Linker.ResolveAssembly();
-            main();
-        }
-
-        static void main()
-        {
+            Config.Reload(null, new string[] { "Engine", "Input", "Output", "Web", /*"Browser", "Spider", "Proxy",*/ "Log"});
             //Cliver.Bot.Program.Run();//It is the entry when the app runs as a console app.
             Cliver.BotGui.Program.Run();//It is the entry when the app uses the default GUI.
         }
