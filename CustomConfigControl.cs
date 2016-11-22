@@ -19,12 +19,14 @@ namespace Cliver.BotGui
 {
     public partial class CustomConfigControl : Cliver.BotGui.ConfigControl
     {
-        new public const string NAME = "Custom";
+        override public string Section
+        {
+            get { return "Custom"; }
+        }
 
         public CustomConfigControl()
         {
             InitializeComponent();
-            Init(NAME);
         }
         
         override protected void SetToolTip()

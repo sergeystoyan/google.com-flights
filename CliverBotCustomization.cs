@@ -52,7 +52,7 @@ namespace Cliver.BotCustomization
     {
         override public string[] GetConfigControlNames()
         {
-            return new string[] { "General", "Input", "Output", "Web", /*"Browser", "Spider", "Proxy",*/ "Log", "Custom" };
+            return new string[] { "Custom", "Engine", "Input", "Output", "Web", /*"Browser", "Spider", "Proxy",*/ "Log" };
         }
 
         override public Cliver.BaseForm GetToolsForm()
@@ -96,12 +96,18 @@ Developed by: www.cliversoft.com";
         {
             MailMessage mm = new MailMessage(Custom.Default.SenderEmail, Custom.Default.AdminEmail)
             {
-                Subject = "CliverBot: FATAL ERROR",
-                Body = "CliverBot stopped due to a fatal error. Details can be found in the logs. Support contact: sergey.stoyan@gmail.com"
+                Subject = "CliverBot is broken",
+                Body = "CliverBot is broken"
             };
             mm.To.Clear();
             mm.To.Add(Custom.Default.AdminMobile + "@" + Custom.Default.AdminSmsGateway);
             email(mm);
+
+            mm = new MailMessage(Custom.Default.SenderEmail, Custom.Default.AdminEmail)
+            {
+                Subject = "CliverBot: FATAL ERROR",
+                Body = "CliverBot stopped due to a fatal error: " + message + ". Details can be found in the logs. Support: sergey.stoyan@gmail.com"
+            };
             mm.To.Clear();
             mm.To.Add(Custom.Default.AdminEmail);
             email(mm);
@@ -232,7 +238,7 @@ Developed by: www.cliversoft.com";
                 {
                     UserInfo ui;
                     if (!users2ui.TryGetValue(u, out ui))
-                        throw new Bot.ProcessorException(ProcessorExceptionType.ERROR, "User " + u + " is not defined");
+                        throw new Session.FatalException("User " + u + " is not defined");
                     mms.Add(
                         new MailMessage(Custom.Default.SenderEmail, ui.Mobile + "@" + ui.SmsGateway)
                         {
