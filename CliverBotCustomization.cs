@@ -38,8 +38,8 @@ namespace Cliver.BotCustomization
         static void Main()
         {
             Config.Initialize(new string[] { "Engine", "Input", "Output", "Web", "Log", "Browser" });
-            Cliver.BotGui.Api.ConfigControlSections = new string[] { "Custom", "Engine", "Input", "Output", "Web", /*"Browser", "Spider", "Proxy",*/ "Log" };
-            Cliver.BotGui.Api.BotThreadControlType = typeof(IeRoutineBotThreadControl);
+            Cliver.BotGui.BotGui.ConfigControlSections = new string[] { "Custom", "Engine", "Input", "Output", "Web", /*"Browser", "Spider", "Proxy",*/ "Log" };
+            Cliver.BotGui.BotGui.BotThreadControlType = typeof(IeRoutineBotThreadControl);
             //Cliver.Bot.Bot.Type = typeof(CustomBot);
 
             //Cliver.Bot.Program.Run();//It is the entry when the app runs as a console app.
@@ -51,7 +51,7 @@ namespace Cliver.BotCustomization
     {
         new static public string GetAbout()
         {
-            return @"WEB CRAWLER
+            return @"WEB CRAWLER 12
 Created: " + Cliver.Bot.Program.GetCustomizationCompiledTime().ToString() + @"
 Developed by: www.cliversoft.com";
         }
@@ -170,7 +170,7 @@ Developed by: www.cliversoft.com";
             readonly public double AlertFactor;
 
 #if DEBUG
-            static int c = 0;
+            static int c = 1;
 #endif
             override public void PROCESSOR(BotCycle bc)
             {
