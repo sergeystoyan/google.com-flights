@@ -49,18 +49,14 @@ namespace Cliver.BotCustomization
 
     public class CustomBot : Cliver.Bot.Bot
     {
-        new static public readonly string About = @"WEB CRAWLER
+        new static public string GetAbout()
+        {
+            return @"WEB CRAWLER
 Created: " + Cliver.Bot.Program.GetCustomizationCompiledTime().ToString() + @"
 Developed by: www.cliversoft.com";
-
-        static CustomBot()
-        {
-            Session.FatalError += Session_FatalError;
-            Session.Starting += Session_Starting;
-            Session.Closing += Session_Closing;
         }
 
-        private static void Session_Starting()
+        new public static void SessionCreating()
         {
             //InternetDateTime.CHECK_TEST_PERIOD_VALIDITY(2016, 6, 11);
 
@@ -74,7 +70,7 @@ Developed by: www.cliversoft.com";
                 users2ui[r["User"]] = new UserInfo() { Mobile = r["Mobile"], SmsGateway = r["SmsGateway"] };
         }
 
-        private static void Session_Closing()
+        new public static void SessionClosing()
         {
             //Session.This.IsUnprocessedInputItem
             File.WriteAllText(last_prices_file, Cliver.SerializationRoutines.Json.Serialize(urls2price));
@@ -83,7 +79,7 @@ Developed by: www.cliversoft.com";
             FileWriter.This.PrepareAndWriteHtmlLine(vs.ToArray());
         }
 
-        private static void Session_FatalError(string message)
+        new public static void FatalError(string message)
         {
             MailMessage mm = new MailMessage(Custom.Default.SenderEmail, Custom.Default.AdminEmail)
             {
