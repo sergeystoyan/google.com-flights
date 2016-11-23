@@ -127,12 +127,12 @@ Developed by: www.cliversoft.com";
                     DataSifter.Capture fc = c.FirstOf("Flight");
                     if (fc == null)
                         throw new ProcessorException(ProcessorExceptionType.ERROR, "Could not get flights.Parse");
-                    price = Regex.Replace(fc.FirstValueOf("Price"), @"[\s,]", "");
+                    price = Regex.Replace(FieldPreparation.Html.Prepare(fc.FirstValueOf("Price")), @"[\s,]", "");
                     DataSifter.Capture cu = CustomBot.url.Parse(url);
-                    route = cu.FirstValueOf("Route");
+                    route = FieldPreparation.Html.Prepare(cu.FirstValueOf("Route"));
                     if (string.IsNullOrWhiteSpace(route))
                         route = cu.FirstValueOf("Route1") + "-" + cu.FirstValueOf("Route2");
-                    route = cu.FirstValueOf("A") + "-" + route;
+                    route = FieldPreparation.Html.Prepare(cu.FirstValueOf("A") + "-" + route);
                 }
                 catch (Exception e)
                 {
@@ -169,8 +169,15 @@ Developed by: www.cliversoft.com";
             readonly public string Users;
             readonly public double AlertFactor;
 
+#if DEBUG
+            static int c = 0;
+#endif
             override public void PROCESSOR(BotCycle bc)
             {
+#if DEBUG
+                if (c++ > 0)
+                    return;
+#endif
                 //Session.FatalErrorClose("");
                 //throw new ProcessorException(ProcessorExceptionType.ERROR, "test");
                 //throw new Session.FatalException("test");
