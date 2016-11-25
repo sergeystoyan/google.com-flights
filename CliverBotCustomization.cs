@@ -40,7 +40,6 @@ namespace Cliver.BotCustomization
             Config.Initialize(new string[] { "Engine", "Input", "Output", "Web", "Log", "Browser" });
             Cliver.BotGui.BotGui.ConfigControlSections = new string[] { "Custom", "Engine", "Input", "Output", "Web", /*"Browser", "Spider", "Proxy",*/ "Log" };
             Cliver.BotGui.BotGui.BotThreadControlType = typeof(IeRoutineBotThreadControl);
-            //Cliver.Bot.Bot.Type = typeof(CustomBot);
 
             //Cliver.Bot.Program.Run();//It is the entry when the app runs as a console app.
             Cliver.BotGui.Program.Run();//It is the entry when the app uses the default GUI.
