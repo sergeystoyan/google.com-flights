@@ -38,24 +38,41 @@ namespace Cliver.BotCustomization
         static void Main()
         {
             Config.Initialize(new string[] { "Engine", "Input", "Output", "Web", "Log", "Browser" });
-            Cliver.BotGui.BotGui.ConfigControlSections = new string[] { "Custom", "Engine", "Input", "Output", "Web", /*"Browser", "Spider", "Proxy",*/ "Log" };
-            Cliver.BotGui.BotGui.BotThreadControlType = typeof(IeRoutineBotThreadControl);
-
+            
             //Cliver.Bot.Program.Run();//It is the entry when the app runs as a console app.
             Cliver.BotGui.Program.Run();//It is the entry when the app uses the default GUI.
         }
     }
 
-    public class CustomBot : Cliver.Bot.Bot
+    public class CustomBotThreadManagerForm : BotThreadManagerForm
     {
-        new static public string GetAbout()
+        override public Type GetBotThreadControlType()
+        {
+            return typeof(IeRoutineBotThreadControl);
+        }
+    }
+
+    public class CustomConfigForm : ConfigForm
+    {
+        override public List<string> GetConfigControlSections()
+        {
+            return new List<string> { "Custom", "Engine", "Input", "Output", "Web", /*"Browser", "Spider", "Proxy",*/ "Log" };
+        }
+    }
+
+    public class AboutFormForm : AboutForm
+    {
+        override public string GetAbout()
         {
             return @"WEB CRAWLER 12
 Created: " + Cliver.Bot.Program.GetCustomizationCompiledTime().ToString() + @"
 Developed by: www.cliversoft.com";
         }
+    }
 
-        new public static void SessionCreating()
+    public class CustomSession : Session
+    {
+        public CustomSession()
         {
             //InternetDateTime.CHECK_TEST_PERIOD_VALIDITY(2016, 6, 11);
 
@@ -69,7 +86,7 @@ Developed by: www.cliversoft.com";
                 users2ui[r["User"]] = new UserInfo() { Mobile = r["Mobile"], SmsGateway = r["SmsGateway"] };
         }
 
-        new public static void SessionClosing()
+        override public void __Closing()
         {
             //Session.This.IsUnprocessedInputItem
             File.WriteAllText(last_prices_file, Cliver.SerializationRoutines.Json.Serialize(urls2price));
@@ -78,7 +95,7 @@ Developed by: www.cliversoft.com";
             FileWriter.This.PrepareAndWriteHtmlLine(vs.ToArray());
         }
 
-        new public static void FatalError(string message)
+        override public void __ErrorClosing(string message)
         {
             MailMessage mm = new MailMessage(Custom.Default.SenderEmail, Custom.Default.AdminEmail)
             {
@@ -126,12 +143,12 @@ Developed by: www.cliversoft.com";
                     DataSifter.Capture fc = c.FirstOf("Flight");
                     if (fc == null)
                         throw new ProcessorException(ProcessorExceptionType.ERROR, "Could not get flights.Parse");
-                    price = Regex.Replace(FieldPreparation.Html.Prepare(fc.FirstValueOf("Price")), @"[\s,]", "");
-                    DataSifter.Capture cu = CustomBot.url.Parse(url);
-                    route = FieldPreparation.Html.Prepare(cu.FirstValueOf("Route"));
+                    price = Regex.Replace(FieldPreparation.Html.Normalize(fc.FirstValueOf("Price")), @"[\s,]", "");
+                    DataSifter.Capture cu = CustomSession.url.Parse(url);
+                    route = FieldPreparation.Html.Normalize(cu.FirstValueOf("Route"));
                     if (string.IsNullOrWhiteSpace(route))
                         route = cu.FirstValueOf("Route1") + "-" + cu.FirstValueOf("Route2");
-                    route = FieldPreparation.Html.Prepare(cu.FirstValueOf("A") + "-" + route);
+                    route = FieldPreparation.Html.Normalize(cu.FirstValueOf("A") + "-" + route);
                 }
                 catch (Exception e)
                 {
@@ -142,105 +159,108 @@ Developed by: www.cliversoft.com";
             }
         }
 
-        override public void CycleStarting()
+        public class CustomBotCycle : BotCycle
         {
-            irbtc = (IeRoutineBotThreadControl)BotThreadControl.GetInstanceForThisThread();
-            IR = new IeRoutine(irbtc.Browser);
-            IR.UseCache = false;
-        }
-
-        override public void CycleExiting()
-        {
-            irbtc.Invoke(() =>
+            override public void __Starting()
             {
-                irbtc.Browser.Stop();
-                irbtc.Controls.Remove(irbtc.Browser);
-                irbtc.Browser.Dispose();
-            });
-        }
-        IeRoutineBotThreadControl irbtc;
+                irbtc = (IeRoutineBotThreadControl)BotThreadControl.GetInstanceForThisThread();
+                IR = new IeRoutine(irbtc.Browser);
+                IR.UseCache = false;
+            }
 
-        IeRoutine IR;
-
-        public class FlightSearchItem : InputItem
-        {
-            readonly public string Url;
-            readonly public string Users;
-            readonly public double AlertFactor;
-
-#if DEBUG
-            static int c = 1;
-#endif
-            override public void PROCESSOR(BotCycle bc)
+            override public void __Exiting()
             {
-#if DEBUG
-                if (c++ > 0)
-                    return;
-#endif
-                //Session.FatalErrorClose("");
-                //throw new ProcessorException(ProcessorExceptionType.ERROR, "test");
-                //throw new Session.FatalException("test");
-                CustomBot cb = (CustomBot)bc.Bot;
-
-                string route;
-                string price;
-
-                if (!cb.IR.GetDoc(Url))
+                irbtc.Invoke(() =>
                 {
-                    add_search_results(null, Url, out route, out price);
-                    throw new ProcessorException(ProcessorExceptionType.RESTORE_AS_NEW, "Could not get: " + Url);
-                }
+                    irbtc.Browser.Stop();
+                    irbtc.Controls.Remove(irbtc.Browser);
+                    irbtc.Browser.Dispose();
+                });
+            }
+            IeRoutineBotThreadControl irbtc;
 
-                SleepRoutines.Wait(20000);
-                add_search_results(cb.IR.HtmlDoc, Url, out route, out price);
+            IeRoutine IR;
 
-                string s2 = Regex.Replace(price, @"[^\d\.]", "", RegexOptions.IgnoreCase);
-                double p2 = double.Parse(s2);
-                urls2price[Url] = p2;
+            public class FlightSearchItem : InputItem
+            {
+                readonly public string Url;
+                readonly public string Users;
+                readonly public double AlertFactor;
 
-                if (urls2old_price == null)
-                    return;
+#if DEBUG
+                static int c = 0;
+#endif
+                override public void __Processor(BotCycle bc)
+                {
+#if DEBUG
+                    if (c++ > 2)
+                        return;
+#endif
+                    //Session.FatalErrorClose("");
+                    //throw new ProcessorException(ProcessorExceptionType.ERROR, "test");
+                    //throw new Session.FatalException("test");
+                    //CustomSession session = (CustomSession)bc.Session;
+                    CustomBotCycle cbc = (CustomBotCycle)bc;
 
-                double p;
-                if (!urls2old_price.TryGetValue(Url, out p))
-                    return;
+                    string route;
+                    string price;
 
-                if (AlertFactor * p < p2)
-                    return;
-
-                List<MailMessage> mms = new List<MailMessage>();
-                mms.Add(
-                    new MailMessage(Custom.Default.SenderEmail, Custom.Default.SenderEmail)
+                    if (!cbc.IR.GetDoc(Url))
                     {
-                        Subject = "Flight Alert: " + route + " " + price,
-                        Body = route + " " + price
+                        add_search_results(null, Url, out route, out price);
+                        throw new ProcessorException(ProcessorExceptionType.RESTORE_AS_NEW, "Could not get: " + Url);
                     }
-                );
 
-                foreach (string u in Users.Split(';'))
-                {
-                    UserInfo ui;
-                    if (!users2ui.TryGetValue(u, out ui))
-                        throw new Session.FatalException("User " + u + " is not defined");
+                    SleepRoutines.Wait(20000);
+                    add_search_results(cbc.IR.HtmlDoc, Url, out route, out price);
+
+                    string s2 = Regex.Replace(price, @"[^\d\.]", "", RegexOptions.IgnoreCase);
+                    double p2 = double.Parse(s2);
+                    urls2price[Url] = p2;
+
+                    if (urls2old_price == null)
+                        return;
+
+                    double p;
+                    if (!urls2old_price.TryGetValue(Url, out p))
+                        return;
+
+                    if (AlertFactor * p < p2)
+                        return;
+
+                    List<MailMessage> mms = new List<MailMessage>();
                     mms.Add(
-                        new MailMessage(Custom.Default.SenderEmail, ui.Mobile + "@" + ui.SmsGateway)
+                        new MailMessage(Custom.Default.SenderEmail, Custom.Default.SenderEmail)
                         {
-                            Subject = route + " " + price,
+                            Subject = "Flight Alert: " + route + " " + price,
                             Body = route + " " + price
                         }
                     );
+
+                    foreach (string u in Users.Split(';'))
+                    {
+                        UserInfo ui;
+                        if (!users2ui.TryGetValue(u, out ui))
+                            throw new Session.FatalException("User " + u + " is not defined");
+                        mms.Add(
+                            new MailMessage(Custom.Default.SenderEmail, ui.Mobile + "@" + ui.SmsGateway)
+                            {
+                                Subject = route + " " + price,
+                                Body = route + " " + price
+                            }
+                        );
+                    }
+
+                    email(mms);
                 }
 
-                email(mms);
-            }
-
-            void email(List<MailMessage> mms)
-            {
-                // return;
-                if (mms.Count < 1)
-                    return;
-                foreach (MailMessage mm in mms)
-                    CustomBot.email(mm);
+                void email(List<MailMessage> mms)
+                {
+                    if (mms.Count < 1)
+                        return;
+                    foreach (MailMessage mm in mms)
+                       CustomSession.email(mm);
+                }
             }
         }
 

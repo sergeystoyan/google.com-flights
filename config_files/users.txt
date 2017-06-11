@@ -1,3 +1,8 @@
 User	Mobile	SmsGateway
-Bob	3038278500	txt.att.net
-Mark	3038278500	txt.att.net
+Larry	3038278500	txt.att.net
+Judy	3037755150	txt.att.net	
+Jerry C	3035214011	vtext.com
+Amy	3039314413	vtext.com
+Bruce	3039071794	vtext.com
+Jerry S	9314091320	vtext.com
+Mike	7204281049	vtext.com	
