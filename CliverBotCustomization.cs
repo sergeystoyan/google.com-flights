@@ -37,7 +37,7 @@ namespace Cliver.BotCustomization
         [STAThread]
         static void Main()
         {
-            Config.Initialize(new string[] { "Engine", "Input", "Output", "Web", "Log", "Browser" });
+            Config.Initialize(@"^Cliver", new string[] { "Engine", "Input", "Output", "Web", "Log", "Browser" });
             
             //Cliver.Bot.Program.Run();//It is the entry when the app runs as a console app.
             Cliver.BotGui.Program.Run();//It is the entry when the app uses the default GUI.
@@ -194,7 +194,10 @@ Developed by: www.cliversoft.com";
                 {
 #if DEBUG
                     if (c++ > 2)
+                    {
+                        Log.Main.Warning("Debug version processes only 3 urls from the input list!");
                         return;
+                    }
 #endif
                     //Session.FatalErrorClose("");
                     //throw new ProcessorException(ProcessorExceptionType.ERROR, "test");
