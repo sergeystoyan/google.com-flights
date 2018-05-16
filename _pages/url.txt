@@ -1,2 +1,5 @@
-﻿https://www.google.com/flights/#search;iti=DEN_SYD_2017-02-08*AKL_DEN_2017-02-24;tt=m;a=UA;so=p	3038278500
-https://www.google.com/flights/#search;f=DEN;t=LHR;d=2016-07-11;r=2016-07-25;a=UA;so=p	3038278500
+﻿Url	Users	AlertFactor
+https://www.google.com/flights/#flt=DEN.LHR.2018-09-14*LHR.DEN.2018-09-28;c:USD;e:1;s:1*1;a:UA*UA;sd:1;st:none;t:f	Larry	0.75
+https://www.google.com/flights/#flt=DEN.MUC.2018-09-14*MUC.DEN.2018-09-28;c:USD;e:1;s:1*1;a:UA*UA;sd:1;st:none;t:f	Larry	0.75
+https://www.google.com/flights/#flt=DEN.AMS.2018-09-14*AMS.DEN.2018-09-28;c:USD;e:1;s:1*1;a:UA*UA;sd:1;st:none;t:f	Larry	0.75
+https://www.google.com/flights/#flt=DEN.FCO.2018-09-14*FCO.DEN.2018-09-28;c:USD;e:1;s:1*1;a:UA*UA;sd:1;st:none;t:f	Larry	0.75

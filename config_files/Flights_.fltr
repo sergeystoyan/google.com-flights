@@ -2,6 +2,8 @@
 <!--Filter tree file. Produced by DataSifter3.0, http://www.cliversoft.com-->
 <FilterTree>
   <Filter type="RegexFilter" version="1.0" input_group="" definition="(?'Flight'&lt;li .*?class=&quot;gws-flights-results__result-item.*?class=&quot;gws-flights-widgets-expandablecard__body&quot;.*?&lt;/li&gt;)&#xA;IgnoreCase, Compiled, Singleline" comment="">
-    <Filter type="RegexFilter" version="1.0" input_group="Flight" definition="div class=&quot;gws-flights-results__itinerary-price.*?&gt;(?'Price'.*?)&lt;/div&#xA;IgnoreCase, Compiled, Singleline" comment="" />
+    <Filter type="RegexFilter" version="1.0" input_group="Flight" definition="div class=&quot;gws-flights-results__itinerary-price.*?&gt;(.*?)&lt;/div&#xA;IgnoreCase, Compiled, Singleline" comment="">
+      <Filter type="RegexFilter" version="1.0" input_group="1" definition="(?'Price'[\d\.\,]+)&lt;&#xA;IgnoreCase, Compiled, Singleline" comment="" />
+    </Filter>
   </Filter>
 </FilterTree>

@@ -1,13 +1,5 @@
 Url	Users	AlertFactor
-https://www.google.com/flights/#search;f=DEN;t=LHR;d=2017-07-11;r=2017-07-25;a=UA;so=p	Larry	0.75
-https://www.google.com/flights/#search;f=DEN;t=CDG;d=2017-07-11;r=2017-07-25;a=UA;so=p	Larry	0.75
-https://www.google.com/flights/#search;f=DEN;t=MUC;d=2017-07-11;r=2017-07-25;a=UA;so=p	Larry	0.75
-https://www.google.com/flights/#search;f=DEN;t=FCO;d=2017-07-11;r=2017-07-25;a=UA;so=p	Larry	0.75
-https://www.google.com/flights/#search;f=DEN;t=DUB;d=2017-07-11;r=2017-07-25;a=UA;so=p	Larry	0.75
-https://www.google.com/flights/#search;f=DEN;t=MAD;d=2017-07-11;r=2017-07-25;a=UA;so=p	Larry	0.75
-https://www.google.com/flights/#search;f=DEN;t=FRA;d=2017-07-11;r=2017-07-25;a=UA;so=p	Larry	0.75
-https://www.google.com/flights/#search;f=DEN;t=TYO;d=2017-07-11;r=2017-07-25;a=UA;so=p	Larry	0.75
-https://www.google.com/flights/#search;f=DEN;t=OGG;d=2017-07-11;r=2017-07-25;a=UA;so=p	Larry	0.75
-https://www.google.com/flights/#search;f=DEN;t=HNL;d=2017-07-11;r=2017-07-25;a=UA;so=p	Larry	0.75
-https://www.google.com/flights/#search;f=DEN;t=TYS;d=2017-10-05;r=2017-10-08;a=UA;s=0	Larry	0.85
-
+https://www.google.com/flights/#flt=DEN.LHR.2018-09-14*LHR.DEN.2018-09-28;c:USD;e:1;s:1*1;a:UA*UA;sd:1;st:none;t:f	Larry	0.75
+https://www.google.com/flights/#flt=DEN.MUC.2018-09-14*MUC.DEN.2018-09-28;c:USD;e:1;s:1*1;a:UA*UA;sd:1;st:none;t:f	Larry	0.75
+https://www.google.com/flights/#flt=DEN.AMS.2018-09-14*AMS.DEN.2018-09-28;c:USD;e:1;s:1*1;a:UA*UA;sd:1;st:none;t:f	Larry	0.75
+https://www.google.com/flights/#flt=DEN.FCO.2018-09-14*FCO.DEN.2018-09-28;c:USD;e:1;s:1*1;a:UA*UA;sd:1;st:none;t:f	Larry	0.75

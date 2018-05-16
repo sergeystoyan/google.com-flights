@@ -138,6 +138,14 @@ Developed by: www.cliversoft.com";
                 price = "";
                 try
                 {
+                    //if (hd != null)
+                    //{
+                    //    HtmlElement he = hd.GetElementsByTagName("HTML")[0];
+                    //    he = he.GetHtmlFirstElementContainingFragment("li", "class=\"gws - flights - results__result - item");
+                    //    //he.ClickHtmlElement();
+                    //    //Thread.Sleep(1000);
+                    //    //url = b.Url;
+                    //}
                     string f = hd != null ? hd.GetElementsByTagName("HTML")[0].OuterHtml : "";
                     DataSifter.Capture c = flights.Parse(f);
                     DataSifter.Capture fc = c.FirstOf("Flight");
@@ -145,9 +153,7 @@ Developed by: www.cliversoft.com";
                         throw new ProcessorException(ProcessorExceptionType.ERROR, "Could not get flights.Parse");
                     price = Regex.Replace(FieldPreparation.Html.Normalize(fc.FirstValueOf("Price")), @"[\s,]", "");
                     DataSifter.Capture cu = CustomSession.url.Parse(url);
-                    route = FieldPreparation.Html.Normalize(cu.FirstValueOf("Route"));
-                    if (string.IsNullOrWhiteSpace(route))
-                        route = cu.FirstValueOf("Route1") + "-" + cu.FirstValueOf("Route2");
+                    route = cu.FirstValueOf("Route1") + "-" + cu.FirstValueOf("Route2");
                     route = FieldPreparation.Html.Normalize(cu.FirstValueOf("A") + "-" + route);
                 }
                 catch (Exception e)
